@@ -1,4 +1,7 @@
 #include "NJS.h"
+#include "stm32f1xx_hal.h"
+#include "tim.h"
+#include "stm32f1xx_hal_tim.h"
 
 #include <stdio.h>
 #include <math.h>
@@ -7,30 +10,66 @@
 #define PC_chess 0
 
 #define SIZE 3
-char board[3][3];
-double board_location[9][4]={{55,220,110},{-1,-1,-1},{-1,-1,-1},{-1,-1,-1},{-1,-1,-1},{-1,-1,-1},{-1,-1,-1},{-1,-1,-1},{-1,-1,-1}};
-double white_chequer[5][4]={{80,190,130},{80,225,130},{80,261,130},{80,290,130},{90,320,120}};
-double black_chequer[5][4]={{-1,-1,-1},{-1,-1,-1},{-1,-1,-1},{-1,-1,-1},{-1,-1,-1}};
-int haveused_black=0,haveused_white=0;
-char human,PC;
-int rounds;
+#define black 2
+#define white 1
+double board_location[9][3]={{55,220,110},{-1,-1,-1},{-1,-1,-1},{-1,-1,-1},{-1,-1,-1},{-1,-1,-1},{-1,-1,-1},{-1,-1,-1},{-1,-1,-1}};
+double white_chequer[5][3]={{92,190,130},{92,225,130},{92,261,130},{92,290,130},{92,320,120}};
+double black_chequer[5][3]={{-85,-1,-1},{-1,-1,-1},{-1,-1,-1},{-1,-1,-1},{-1,-1,-1}};
+int white_chess[5],black_chess[5],board[9];
+extern double theta0,theta1,theta2;
+int duty0[3]={50,180,180};
 
 
-
-void chequter_init(){
-	haveused_black=0;haveused_white=0;
-	for(int i=0;i<3;i++){
-		for(int j=0;j<3;j++){board[i][j]=0;}
-	}
+void used_sth(int number,int color){
+		switch(color){
+			case 1:
+				black_chess[number]=black;
+				board[number]=black;
+				break;
+			case 2:
+				white_chess[number]=white;
+				board[number]=white;
+				break;
+			default:
+				break;
+		}
 
 }
-
-void use_block(int number,char player){
-	if(player==human_chess){}
+void move(int* duty){
+	__HAL_TIM_SetCompare(&htim1,TIM_CHANNEL_1,duty[0]);
+	__HAL_TIM_SetCompare(&htim1,TIM_CHANNEL_2,duty[1]);
+	//插入四号舵机垂直函数
+	__HAL_TIM_SetCompare(&htim1,TIM_CHANNEL_3,duty[2]);
+	//插入四号舵机垂直函数
+	
+	__HAL_TIM_SetCompare(&htim1,TIM_CHANNEL_1,duty0[0]);
+	__HAL_TIM_SetCompare(&htim1,TIM_CHANNEL_2,duty0[1]);
+	//插入四号舵机垂直函数
+	__HAL_TIM_SetCompare(&htim1,TIM_CHANNEL_3,duty0[2]);
+	//插入四号舵机垂直函数
 }
-void inverseKinematics(double* position,int* duty) {
-    double x,y,z;double theta0,theta1,theta2;
-    x=position[0];y=position[1];z=position[2];
+
+void inverseKinematics(int number,int* duty,int color) {
+    double x,y,z;
+		switch(color){
+			case 1:
+				x=black_chequer[number][0];
+				y=black_chequer[number][1];
+				z=black_chequer[number][2];
+				break;
+			case 2:
+				x=white_chequer[number][0];
+				y=white_chequer[number][1];
+				z=white_chequer[number][2];
+				break;
+			case 0:
+				x=board_location[number][0];
+				y=board_location[number][1];
+				z=board_location[number][2];
+			default:
+				break;
+		}
+				
     theta0 = atan2(y, x); 
 
     double xp = sqrt(x*x + y*y); // 平面投影距离
@@ -59,55 +98,22 @@ void inverseKinematics(double* position,int* duty) {
     
 }
 
-void judge();//判断是否可达或传输包是否合理
-void bag_handler(char bag[5]){
-	if(1)//此处用于读取串口数据是否为人选择黑棋
-	{human=1;PC=0;}
-	else {human=0;PC=1;}
-	//下面省略一堆用于读取改写串口包或直接取用串口包数值的代码……
-		
-}
-void battle(){
-	rounds=1-human;
-	if(rounds==0){}//AI回合
-	else{}//人类回合
-	
-}
 
-int check_win(char player) {//player=0||1
+
+
+
+int check_win(int player) {//player=1||2
     // 检查行和列
     for(int i=0; i<SIZE; i++) {
-        if(board[i][0] == player && board[i][1] == player && board[i][2] == player) return 1;
-        if(board[0][i] == player && board[1][i] == player && board[2][i] == player) return 1;
-    }
+			if(board[i]==player&&board[i+1]==player&&board[i+2]==player) return 1;
+			if(board[i]==player&&board[i+3]==player&&board[i+6]==player) return 1;
+		} 
     // 检查对角线
-    if(board[0][0] == player && board[1][1] == player && board[2][2] == player) return 1;
-    if(board[0][2] == player && board[1][1] == player && board[2][0] == player) return 1;
+    if(board[0]== player && board[4]== player && board[8]== player) return 1;
+    if(board[2] == player && board[4] == player && board[6] == player) return 1;
     return 0;
 }
 
-void numberhandler(int flag_chess,int number,int *duty,char player){
-	switch(flag_chess){
-		case 0:
-			inverseKinematics(white_chequer[haveused_white],duty);
-			
-			haveused_white++;
-			if(haveused_white>4) haveused_white=0;
-			break;
-		case -1:
-			inverseKinematics(board_location[number],duty);
-			board[number/3][number%3]=player;
-			break;
-		case 1:
-			inverseKinematics(black_chequer[haveused_black],duty);
-			haveused_black++;
-			if(haveused_black>4) haveused_black=0;
-			break;
-		default:
-			break;
-	
-	}
-}
 
 
 

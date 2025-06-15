@@ -1,0 +1,27 @@
+--cpu Cortex-M3
+"servocontrol-v2\startup_stm32f103xb.o"
+"servocontrol-v2\main.o"
+"servocontrol-v2\gpio.o"
+"servocontrol-v2\tim.o"
+"servocontrol-v2\usart.o"
+"servocontrol-v2\stm32f1xx_it.o"
+"servocontrol-v2\stm32f1xx_hal_msp.o"
+"servocontrol-v2\stm32f1xx_hal_gpio_ex.o"
+"servocontrol-v2\stm32f1xx_hal_tim.o"
+"servocontrol-v2\stm32f1xx_hal_tim_ex.o"
+"servocontrol-v2\stm32f1xx_hal.o"
+"servocontrol-v2\stm32f1xx_hal_rcc.o"
+"servocontrol-v2\stm32f1xx_hal_rcc_ex.o"
+"servocontrol-v2\stm32f1xx_hal_gpio.o"
+"servocontrol-v2\stm32f1xx_hal_dma.o"
+"servocontrol-v2\stm32f1xx_hal_cortex.o"
+"servocontrol-v2\stm32f1xx_hal_pwr.o"
+"servocontrol-v2\stm32f1xx_hal_flash.o"
+"servocontrol-v2\stm32f1xx_hal_flash_ex.o"
+"servocontrol-v2\stm32f1xx_hal_exti.o"
+"servocontrol-v2\stm32f1xx_hal_uart.o"
+"servocontrol-v2\system_stm32f1xx.o"
+--strict --scatter "SERVOCONTROL-V2\SERVOCONTROL-V2.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "SERVOCONTROL-V2.map" -o SERVOCONTROL-V2\SERVOCONTROL-V2.axf

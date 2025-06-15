@@ -472,12 +472,12 @@ ARM Macro Assembler    Page 8
               00000200 
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
-ork --depend=dj\startup_stm32f103xb.d -odj\startup_stm32f103xb.o -I.\RTE\_DJ -I
-C:\Users\apgy\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include -IC:\U
-sers\apgy\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.4.1\Device\Include --pre
-define="__UVISION_VERSION SETA 533" --predefine="_RTE_ SETA 1" --predefine="STM
-32F10X_MD SETA 1" --predefine="_RTE_ SETA 1" --list=startup_stm32f103xb.lst sta
-rtup_stm32f103xb.s
+ork --depend=servocontrol-v2\startup_stm32f103xb.d -oservocontrol-v2\startup_st
+m32f103xb.o -I.\RTE\_SERVOCONTROL-V2 -IC:\Users\apgy\AppData\Local\Arm\Packs\AR
+M\CMSIS\5.7.0\CMSIS\Core\Include -IC:\Users\apgy\AppData\Local\Arm\Packs\Keil\S
+TM32F1xx_DFP\2.4.1\Device\Include --predefine="__UVISION_VERSION SETA 533" --pr
+edefine="_RTE_ SETA 1" --predefine="STM32F10X_MD SETA 1" --predefine="_RTE_ SET
+A 1" --list=startup_stm32f103xb.lst startup_stm32f103xb.s
 
 
 
